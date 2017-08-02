@@ -1,11 +1,20 @@
 // All words used in this hangman game.
 // Make sure everything in lower case!
-var randomWords = ["3dhubs", "filament", "layer", "marvin", "order", "print"];
+var randomSets = [
+  { desc:"3D", word:"print" },
+  { desc:"law", word:"order" },
+  { desc:"the \"ink\"", word:"filament" },
+  { desc:"the resolution", word:"layer" },
+  { desc:"the robot?!?!", word:"marvin" },
+  { desc:"the startup", word:"3dhubs" }
+];
 
 var countHP = 5;
 var countSuggest = 3;
 
-var chosenWord = pickRandomWord(randomWords);
+var chosenSet = pickRandomSet(randomSets);
+var chosenDesc = chosenSet.desc;
+var chosenWord = chosenSet.word;
 var progress = chosenWord; // How many letters are still need to be guessed.
 var is = []; // List of index of correctly guessed letters.
 
@@ -13,6 +22,7 @@ var linesProps; // User interface lines properties (coordinates, ...).
 var margin;
 
 var upperText; // GUI to display winning/losing or `countHP`.
+var clueText;
 var suggestButton;
 
 var mainMenuButtons = ["? suggest", "& retry"];
@@ -31,14 +41,22 @@ function setup () {
   createCanvas(960, 120);
 
   margin = Math.ceil((width > height ? width : height)/100);
-  mainMenuTextSize = (width > height ? height : width)/3 - margin/3;
+  mainMenuTextSize = (width > height ? height : width)/4 - margin/4;
 
+  // Draw the clue text.
+  clueText = new textGUI(
+    guiMainMenuTexts,
+    chosenDesc,
+    margin,
+    0,
+    mainMenuTextSize
+  );
   // Draw the main upper text.
   upperText = new textGUI(
       guiMainMenuTexts,
       setHP(countHP),
       margin,
-      0,
+      mainMenuTextSize,
       mainMenuTextSize
   );
   upperText.fill = "red"; // Initial red text to display hit points (HP).
@@ -50,7 +68,7 @@ function setup () {
         guiMainMenuButtons,
         mainMenuButtons[i],
         margin,
-        mainMenuTextSize*(i + 1),
+        mainMenuTextSize*(i + 2),
         mainMenuTextSize,
         mainMenuFunctions[i]
       );
@@ -60,7 +78,7 @@ function setup () {
         guiMainMenuButtons,
         mainMenuButtons[i],
         margin,
-        mainMenuTextSize*(i + 1),
+        mainMenuTextSize*(i + 2),
         mainMenuTextSize,
         mainMenuFunctions[i]
       );
@@ -75,7 +93,7 @@ function setup () {
   linesProps = createLinesProps(
       chosenWord,
       mainMenuWidth + 30,
-      height - 20,
+      height - margin,
       width - (mainMenuWidth + 50)
   );
   // Draw lines!
@@ -117,7 +135,7 @@ function mousePressed () {
 
 
 
-function pickRandomWord (_array) {
+function pickRandomSet (_array) {
   return _array[Math.floor(Math.random()*_array.length)];
 }
 
@@ -340,18 +358,21 @@ function reInit () {
   countHP = 5;
   countSuggest = 3;
 
-  chosenWord = pickRandomWord(randomWords);
+  chosenSet = pickRandomSet(randomSets);
+  chosenDesc = chosenSet.desc;
+  chosenWord = chosenSet.word;
   progress = chosenWord;
 
   suggestButton.fill = "black";
   upperText.fill = "red";
   upperText.text = setHP(countHP);
+  clueText.text = chosenDesc;
 
   // Set the line properties.
   linesProps = createLinesProps(
       chosenWord,
       mainMenuWidth + 30,
-      height - 20,
+      height - margin,
       width - (mainMenuWidth + 50)
   );
   createLinesGUI(linesProps);
