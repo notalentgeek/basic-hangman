@@ -268,6 +268,8 @@ function suggestLetters (_x) {
       var letter = progress.charAt(Math.floor(Math.random()*progress.length));
       putLetterSuggestion(letter);
 
+      checkWin();
+
       return letter;
     }
 
@@ -291,6 +293,8 @@ function suggestLetters (_x) {
 
     // Double loop! Not efficient but whatever XD.
     for (var i = 0; i < letters.length; i ++) putLetterSuggestions(letters[i]);
+
+    checkWin();
 
     return arr;
   }
